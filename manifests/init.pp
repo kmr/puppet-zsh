@@ -9,14 +9,14 @@ class zsh {
 
   package { 'zsh': }
 
-  file_line { 'add zsh to /etc/shells':
-    path    => '/etc/shells',
-    line    => "${boxen::config::homebrewdir}/bin/zsh",
-    require => Package['zsh'],
+  zsh_path = $osfamily ? {
+    'Darwin' => "${boxen::config::homebrewdir}/bin/zsh",
+    default  => "/usr/bin/zsh",
   }
 
-  osx_chsh { $::luser:
-    shell   => "${boxen::config::homebrewdir}/bin/zsh",
-    require => File_line['add zsh to /etc/shells'],
+  file_line { 'add zsh to /etc/shells':
+    path    => '/etc/shells',
+    line    => "${zsh_path}",
+    require => Package['zsh'],
   }
 }
